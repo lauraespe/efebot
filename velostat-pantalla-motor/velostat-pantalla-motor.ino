@@ -3,11 +3,19 @@
 #include <Servo.h>
 Servo motor;
 
+// Available Pins
+int MOTOR_PIN = 3;
+// String VELOSTAT_PIN = A11;
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(12, 11, 9, 8, 5, 4);
 
-int sensor ;
-int veloTime = 0;
+int velostatPressure;
+unsigned long startTime;
+unsigned long currentTime;
+unsigned long elapsedTime;
+
+bool lcdIsOn = false;
+bool servoIsOn = false;
 
 byte smiley[8] = {
   0b01110,
@@ -20,8 +28,6 @@ byte smiley[8] = {
   0b01110,
 };
 
-unsigned long myTime;
-
 void setup() {
   // set up the LCD's number of columns and rows: 
   lcd.begin(16, 2);
@@ -29,29 +35,52 @@ void setup() {
   // create a new character
   lcd.createChar(1, smiley);
   
-  motor.attach(3);
+  motor.attach(MOTOR_PIN);
   pinMode(A11, INPUT);
   Serial.begin(9600); 
   motor.write(0);
 }
 
+bool isCountingTime = false;
+
+void initServoMotor(){
+  motor.write(179);
+  Serial.println("el motor se ha movido");
+  motor.write(90);
+  delay(100);
+  motor.write(179);
+  servoIsOn = true;
+}
+
 void loop() {
 
-  sensor = analogRead(A11);
-  //Serial.println(sensor);
+  velostatPressure = analogRead(A11);
+  Serial.println(velostatPressure);
+ 
+  if (velostatPressure > 5 && lcdIsOn == false){
+    lcdIsOn = true;
+  }
 
-  Serial.print("Time: ");
-  veloTime = millis();
+  if (velostatPressure > 5 && lcdIsOn == true){
+    if (isCountingTime == false){
+      startTime = millis();
+      isCountingTime = true;
+    }
+    currentTime = millis();
+    elapsedTime = currentTime - startTime;
+    if (elapsedTime > 3000){
+      lcdIsOn = false; 
+      delay(1000); // prevent starting again
+    }
+  } else {
+    isCountingTime = false;  
+  }
 
-  Serial.println(veloTime); 
-  delay(1000);         
+  if (lcdIsOn == true) {
 
-  /*if (sensor > 5) {
-    motor.write(179);
-    Serial.println("el motor se ha movido");
-    motor.write(90);
-    delay(100);
-    motor.write(179);
+    if(servoIsOn == false){
+      initServoMotor();
+    }
     
     lcd.setCursor(6,0);
     lcd.write((byte)1);
@@ -68,11 +97,11 @@ void loop() {
     lcd.print("> <");
     delay(320);
     
-  } else {
-    motor.write(0);
-    delay(100);
-    lcd.clear();
-  }*/
+  } 
   
+  if (lcdIsOn == false){
+    motor.write(0);
+    lcd.clear();
+  }
   
 }
