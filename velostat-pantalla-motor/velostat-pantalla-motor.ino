@@ -1,22 +1,26 @@
-// include the library code:
+// include the librarys code:
 #include <LiquidCrystal.h>
 #include <Servo.h>
 Servo motor;
 
-// Available Pins
+// Assigned pins
 int MOTOR_PIN = 3;
-// String VELOSTAT_PIN = A11;
-// initialize the library with the numbers of the interface pins
+String VELOSTAT_PIN = A11;
 LiquidCrystal lcd(12, 11, 9, 8, 5, 4);
 
+// Time calculating variables
 int velostatPressure;
 unsigned long startTime;
 unsigned long currentTime;
 unsigned long elapsedTime;
 
+// lcd screen and servo motor on and off states
 bool lcdIsOn = false;
 bool servoIsOn = false;
+//
+bool isCountingTime = false;
 
+// lcd screen eyes byte configuration
 byte smiley[8] = {
   0b01110,
   0b11001,
@@ -29,21 +33,73 @@ byte smiley[8] = {
 };
 
 void setup() {
-  // set up the LCD's number of columns and rows: 
+  // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
 
   // create a new character
   lcd.createChar(1, smiley);
-  
+
   motor.attach(MOTOR_PIN);
-  pinMode(A11, INPUT);
-  Serial.begin(9600); 
+  pinMode(VELOSTAT_PIN, INPUT);
   motor.write(0);
+
+  Serial.begin(9600);
 }
 
-bool isCountingTime = false;
 
-void initServoMotor(){
+void loop() {
+
+  velostatPressure = analogRead(VELOSTAT_PIN);
+  Serial.println(velostatPressure);
+
+// -------------------- primera secuencia if --------------------
+
+  if (velostatPressure > 5 && lcdIsOn == false) {
+    lcdIsOn = true;
+  }
+
+  if (velostatPressure > 5 && lcdIsOn == true) {
+    if (isCountingTime == false) {
+      startTime = millis();
+      isCountingTime = true;
+    }
+    currentTime = millis();
+    elapsedTime = currentTime - startTime;
+    if (elapsedTime > 3000) {
+      lcdIsOn = false;
+      delay(1000); // prevent starting again
+    }
+  } else {
+    isCountingTime = false;
+  }
+
+// -------------------- segunda secuencia if --------------------
+
+  if (lcdIsOn == true) {
+
+    if (servoIsOn == false) {
+      initServoMotor();
+    }
+    pantallaLCD();
+  }
+
+// -------------------- tercer if --------------------
+  
+  if (lcdIsOn == false) {
+    motor.write(0);
+    lcd.clear();
+  }
+
+}
+
+
+/////////////////////////////////
+//                             //
+//         FUNCTIONS           //
+//                             //
+/////////////////////////////////
+
+void initServoMotor() {
   motor.write(179);
   Serial.println("el motor se ha movido");
   motor.write(90);
@@ -52,56 +108,24 @@ void initServoMotor(){
   servoIsOn = true;
 }
 
-void loop() {
+void pantallaLCD() {
 
-  velostatPressure = analogRead(A11);
-  Serial.println(velostatPressure);
- 
-  if (velostatPressure > 5 && lcdIsOn == false){
-    lcdIsOn = true;
-  }
-
-  if (velostatPressure > 5 && lcdIsOn == true){
-    if (isCountingTime == false){
-      startTime = millis();
-      isCountingTime = true;
-    }
-    currentTime = millis();
-    elapsedTime = currentTime - startTime;
-    if (elapsedTime > 3000){
-      lcdIsOn = false; 
-      delay(1000); // prevent starting again
-    }
-  } else {
-    isCountingTime = false;  
-  }
-
-  if (lcdIsOn == true) {
-
-    if(servoIsOn == false){
-      initServoMotor();
-    }
-    
-    lcd.setCursor(6,0);
+    lcd.setCursor(6, 0);
     lcd.write((byte)1);
 
     lcd.createChar(1, smiley);
-    lcd.setCursor(8,0);
+    lcd.setCursor(8, 0);
     lcd.write((byte)1);
 
-    lcd.setCursor(7,1);
+    lcd.setCursor(7, 1);
     lcd.print("w");
     delay(3000);
 
-    lcd.setCursor(6,0);
+    lcd.setCursor(6, 0);
     lcd.print("> <");
     delay(320);
-    
-  } 
-  
-  if (lcdIsOn == false){
-    motor.write(0);
-    lcd.clear();
-  }
+}
+
+void motoresRuedas() {
   
 }
