@@ -4,9 +4,9 @@
 Servo motor;
 
 // Assigned pins
-int MOTOR_PIN = 3;
-String VELOSTAT_PIN = A11;
-LiquidCrystal lcd(12, 11, 9, 8, 5, 4);
+int MOTOR_PIN = 6;
+//String VELOSTAT_PIN = A0;
+//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 // Time calculating variables
 int velostatPressure;
@@ -40,14 +40,24 @@ void setup() {
   lcd.createChar(1, smiley);
 
   motor.attach(MOTOR_PIN);
-  pinMode(VELOSTAT_PIN, INPUT);
+  //pinMode(VELOSTAT_PIN, INPUT);
   motor.write(0);
 
-  Serial.begin(9600);
+  //Serial.begin(9600);
 }
 
 
 void loop() {
+
+    motor.write(179);
+    delay(500);
+    motor.write(90);
+    delay(3000);
+    motor.write(179);
+    delay(500);
+    motor.write(90);
+    delay(3000);
+    
 
   velostatPressure = analogRead(VELOSTAT_PIN);
   Serial.println(velostatPressure);
@@ -76,7 +86,6 @@ void loop() {
 // -------------------- segunda secuencia if --------------------
 
   if (lcdIsOn == true) {
-
     if (servoIsOn == false) {
       initServoMotor();
     }
@@ -105,7 +114,6 @@ void initServoMotor() {
   motor.write(90);
   delay(100);
   motor.write(179);
-  servoIsOn = true;
 }
 
 void pantallaLCD() {
