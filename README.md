@@ -7,7 +7,9 @@ Año 2030, una nueva realidad distópica principalmente promovida por el distanc
 
 ### · SECTIONS ·
 
+The code is divided in two. One program there's the connections between the dc motors and the ultrasonic distance sensors and on the other the connection between the lcd screen and the servo motor. We had to put the on different codes and not a unified one as the servomotor had some interferences with the dc motors.
 
+There's also the examples on how the connection would have been with the velostat but the sensor stopped working and we didn't had a change.
 
 ### · PSEUDOCODE ·
 
@@ -72,3 +74,4 @@ if the lcd screen is on
 
 ### · DIAGRAM ·
 
+The diagram can be found in the pdf documentation of the project
