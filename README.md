@@ -75,4 +75,5 @@ if the lcd screen is on
 
 ### · DIAGRAM ·
 
-The diagram can be found in the pdf documentation of the project
+![fluxDiagram](https://user-images.githubusercontent.com/81622003/158909902-6bbc62c9-fc40-4467-8bab-88a3df5782f2.png)
+
