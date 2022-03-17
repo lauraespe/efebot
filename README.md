@@ -1,9 +1,10 @@
 # eFeBot Project
 Company Robot - college arduino project
+Group 2 - Laia Miquel, Jordi Muxella, Edu Plasencia, Laura Esteve
 
 ### · PROJECT DESCRIPTION ·
 
-Año 2030, una nueva realidad distópica principalmente promovida por el distanciamiento social que se presenta, el encargado de alegrarle el día al usuario es ni más ni menos un pequeño y amistoso robot el cual actúa como compañía personal de éste.
+Year 2030, a new dystopian reality mainly promoted by the social distancing that is presented, the one in charge of brightening the user's day is neither more nor less than a small and friendly robot which acts as his personal company.
 
 ### · SECTIONS ·
 
